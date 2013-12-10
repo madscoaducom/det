@@ -37,8 +37,8 @@ Both `setup-dnt` and `dnt` read the ***.dntrc*** file in the current working dir
 A basic ***.dntrc*** file for a Node package with a native add-on component might look like this:
 
 ```sh
-## DNT config file
-## see https://github.com/rvagg/dnt
+## DET config file
+## see https://github.com/madscoaducom/det
 
 NODE_VERSIONS="master v0.11.9 v0.10.22"
 OUTPUT_PREFIX="libssh-"
