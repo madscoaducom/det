@@ -119,16 +119,14 @@ Override this command to adjust the way **DNT** copies the mounted source direct
 
 ***Default:*** <i><code>tail -1</code></i>
 
-**DNT** is designed to work best with [TAP](https://github.com/isaacs/node-tap) which outputs a single **"ok"** or **"not ok"** as the final line of the test execution. The `LOG_OK_CMD` is a command that will take the complete log file piped to it and return either an "ok" to indicate a pass or something else to indicate a failure. i.e. `cat log | ${LOG_OK_CMD}`.
+**DET** is designed to work best with [TAP](https://github.com/isaacs/node-tap) which outputs a single **"ok"** or **"not ok"** as the final line of the test execution. The `LOG_OK_CMD` is a command that will take the complete log file piped to it and return either an "ok" to indicate a pass or something else to indicate a failure. i.e. `cat log | ${LOG_OK_CMD}`.
 
 If you are not using TAP-output then you can adjust the `LOG_OK_CMD` to transform the source to return an "ok" when the tests have passed. You may need to resort to a bit of `sed` depending on your testing framework.
 
-Example .dntrc files
+Example .detrc files
 --------------------
 
- * **[LevelDOWN](https://github.com/rvagg/node-leveldown/blob/master/.dntrc)**: simple requirements, latest 0.8, 0.10, 0.11 and master.
- * **[NAN](https://github.com/rvagg/nan/blob/master/.dntrc)**: needs to test across many versions of Node, including master. Has tests installed and run in non-root directory.
- * **[node-ssh](https://github.com/rvagg/node-libssh/blob/master/.dntrc)**: latest 0.10, 0.11 and master only. Needs additional software installed on the image prior to compile.
+
 
 Other considerations
 --------------------
@@ -139,26 +137,18 @@ Other considerations
 
  * If your test environment requires specific fixtures that take a considerable amount of time to set up for each test (for example an installation of a database or other complex software) then you could consider customising the node_dev Docker image to have the environment partially set up so you don't need to repeat the process for each test run. Note though that this is not portable for other people needing to run your tests with **DNT** without specific additional instructions.
 
-What about Mac, Windows, SOLARIS?
----------------------------------
-
-What about them?
-
-Solaris invented containers with "zones" and Solaris users are grown-ups and can take care of themselves.
-
-The rest of you babies, well... are you really *deploying* on those toys?
 
 Contributing
 ------------
 
-Yes please, I'm happy to share ownership with people making significant contributions to the code, you're welcome to help steer the project if you invest enough.
-
-Currently **DNT** serves my simple needs but I imagine that for a lot of people there will be additional requirements different to my own. Please open an issue or pull request for further discussion!
+TBD
 
 <a name="licence"></a>
 Licence &amp; copyright
 -------------------
 
-Copyright (c) 2013 Rod Vagg
+Based on Rod Vagg's [DNT](https://github.com/rvagg/dnt)
 
-**DNT** is licensed under an MIT +no-false-attribs license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.
+Copyright (c) 2013
+
+**DET** is licensed under an MIT +no-false-attribs license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.
