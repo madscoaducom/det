@@ -1,39 +1,35 @@
-DNT: Docker Node Tester
+DET: Docker Elm Tester
 -----------------------
 
-[![NPM](https://nodei.co/npm/dnt.png?downloads)](https://nodei.co/npm/dnt/)
+**Use [Docker](http://www.docker.io) to test code against multiple versions of [Elm](http://elm-lang.org) simultaneously**
 
-**Use [Docker](http://www.docker.io) to test code against multiple versions of Node.js simultaneously**
-
-<img src="http://www.docker.io/static/img/homepage-docker-logo.png" width="138" height="114"> <img src="http://nodejs.org/images/logos/nodejs-dark.png" width="212" height="114"> <img src="http://img.pandawhale.com/29490-Picard-applause-clapping-gif-s5nz.gif" width="151" height="114">
-
-![NAN DNT](http://r.va.gg/images/2013/11/nan-dnt.png)
+<img src="http://www.docker.io/static/img/homepage-docker-logo.png" width="138" height="114"> <img src="http://elm-lang.org/logo.png" width="80" height="80"> 
 
 Docker is a tool that simplifies the use of Linux containers to create lightweight, isolated compute "instances".
 
-**DNT** contains two tools that work with Docker and Node.js to set-up containers for testing and run your project's tests in those containers.
+**DET** contains two tools that work with Docker and Elm to set-up containers for testing and run your project's tests in those containers.
 
 What incantations does this magic require?
 ------------------------------------------
 
  1. You will need to install Docker on your system, see the [installation instructions](http://docs.docker.io/en/latest/installation/) (don't be afraid, it's pretty simple).
- 1. Install **DNT** from npm: `sudo npm install dnt -g`
- 1. Create a ***.dntrc*** file for your project(s) (instructions below).
- 1. Run `sudo setup-dnt` to set up the Docker images required for your project. It will take some time to download, compile and install the required software but once you've done it once your images are re-usable and you'll only need to set up additional images you require in the future.
- 1. Run `sudo dnt` to run your test suite via **DNT** against all of the Node versions you've specified.
+ 1. Install **DET** : `git clone xxxxx`
+ 1. Create a ***.detrc*** file for your project(s) (instructions below).
+ 1. Run `setup-det` to set up the Docker images required for your project. It will take some time to download, compile and install the required software but once you've done it once your images are re-usable and you'll only need to set up additional images you require in the future.
+ 1. Run `det` to run your test suite via **DET** against all of the Elm versions you've specified.
 
-About the images DNT creates
+About the images DET creates
 ----------------------------
 
-The `setup-dnt` script sets up the most basic images required to run Node.js applications, nothing extra.
+The `setup-det` script sets up the most basic images required to compile and run applications, nothing extra.
 
-It first creates an image called "dev_base" that uses the default Docker "ubuntu" image and adds the build tools required to compile and install Node.js
+It first creates an image called "dev_base" that uses the default Docker "ubuntu" image and adds the build tools required to compile and install Elm.
 
-Next it creates a "node_dev" image that contains a complete copy of the Node.js [source repository](http://github.com/joyent/node). Finally, it creates a series of images that are required by your current project (or the ***.dntrc*** file in your current directory).
+Next it creates a "elm_dev" image that contains a complete copy of the Elm [source repository](https://github.com/evancz/Elm). Finally, it creates a series of images that are required by your current project (or the ***.detrc*** file in your current directory).
 
-For each Node version, you will end up with an image named "node_dev-VERSION" where VERSION is the branch or tag in the Node.js repository. Typically this takes the format: "v0.x.y", e.g. "v0.10.22", "v0.8.26", etc. You can also specify "master" if you need the bleeding edge.
+For each Elm version, you will end up with an image named "elm_dev-VERSION" where VERSION is the branch or tag in the Elm repository. Typically this takes the format: "v0.x.y", e.g. "v0.10.22", "v0.8.26", etc. You can also specify "master" if you need the bleeding edge.
 
-.dntrc
+.detrc
 ------
 
 Both `setup-dnt` and `dnt` read the ***.dntrc*** file in the current working directory to load the current configuration. The file is simply read as a Bash script so it can contain arbitrary Bash commands. To configure **DNT** you need to set some key variables: `NODE_VERSIONS` and `TEST_CMD`. Optional variables include `COPYDIR`, `OUTPUT_PREFIX`, `SIMULTANEOUS`, `COPY_CMD` and `LOG_OK_CMD`.
