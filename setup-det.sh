@@ -57,10 +57,35 @@ setup_container() {
 setup_container "dev_base" "ubuntu:12.10" " \
   echo 'deb http://archive.ubuntu.com/ubuntu quantal main universe' > /etc/apt/sources.list; \
   apt-get update; \
-  apt-get install -y make gcc g++ python git haskell-platform"
+  apt-get install -y haskell-platform git autoconf libtool make ncurses-dev g++ llvm libgmp3c2 wget; \
+  cabal update; \
+  cabal install alex happy; \
+"
+
+setup_container "dev_base_ghc7.6" "dev_base" " \
+  cd /tmp && \
+  wget http://www.haskell.org/ghc/dist/7.6.3/ghc-7.6.3-x86_64-unknown-linux.tar.bz2 && \
+  wget http://www.haskell.org/platform/download/2013.2.0.0/haskell-platform-2013.2.0.0.tar.gz"
+
+setup_container "dev_base_ghc7.6_2" "dev_base_ghc7.6" " \
+  cd /tmp && \
+  tar jxf ghc-7.6.3-x86_64-unknown-linux.tar.bz2 && \
+  cd ghc-7.6.3 && \
+  PATH=~/.cabal/bin:$PATH ./configure && \
+  make;  \
+  make install && \
+  cd /tmp && \
+  tar xzf haskell-platform-2013.2.0.0.tar.gz"
+
+setup_container "dev_base_ghc76_2_platform" "dev_base_ghc7.6_2" " \
+  cd /tmp && \
+  cd haskell-platform-2013.2.0.0 && \
+  PATH=~/.cabal/bin:$PATH ./configure && \
+  make; \
+  make install"
 
 # The main Elm repo in an image by itself
-setup_container "elm_dev" "dev_base" " \
+setup_container "elm_dev" "dev_base_ghc76_2_platform" " \
   git clone https://github.com/evancz/Elm /usr/src/Elm/"
 
 # For each version of Elm, make an image by checking out that branch
