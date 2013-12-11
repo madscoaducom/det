@@ -4,12 +4,12 @@
 # Set up Docker containers with basic dev tools and Elm  #
 ##########################################################
 
-CONFIG_FILE=".dntrc"
+CONFIG_FILE=".detrc"
 # For `make -j X`
-BUILD_JOBS=`grep '^processor\s*\:\s*[0-9][0-9]*$' /proc/cpuinfo | wc -l`
+#BUILD_JOBS=`grep '^processor\s*\:\s*[0-9][0-9]*$' /proc/cpuinfo | wc -l`
 
 if [ `whoami` != "root" ]; then
-  echo "Must run dnt as root"
+  echo "Must run det as root"
   exit 1
 fi
 
@@ -65,13 +65,15 @@ setup_container "elm_dev" "dev_base" " \
 
 # For each version of Elm, make an image by checking out that branch
 # on the repo, building it and installing it
-for NV in $ELM_VERSIONS; do
-  setup_container "elm_dev-$NV" "elm_dev" " \
+for EV in $ELM_VERSIONS; do
+  setup_container "elm_dev-$EV" "elm_dev" " \
     cd /usr/src/Elm && \
     git fetch origin && \
-    git checkout $NV && \
-    git pull origin $NV && \
-    ./configure && \
-    make -j${BUILD_JOBS} && \
-    make install"
+    git checkout $EV && \
+    git pull origin $EV && \
+    cabal update && \
+    cabal install --only-dependencies && \
+    cabal configure && \
+    cabal build && \
+    cabal install"
 done
