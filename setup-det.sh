@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ##########################################################
-# Set up Docker containers with basic dev tools and Node #
+# Set up Docker containers with basic dev tools and Elm  #
 ##########################################################
 
 CONFIG_FILE=".dntrc"
@@ -21,12 +21,12 @@ else
 fi
 
 if [ $# -gt 0 ] ; then
-  NODE_VERSIONS=$*
-  echo "Using Node versions: ${NODE_VERSIONS}"
+  ELM_VERSIONS=$*
+  echo "Using Elm versions: ${ELM_VERSIONS}"
 fi
 
-if [ "X${NODE_VERSIONS}" == "X" ]; then
-  echo "You must set up a NODE_VERSIONS list in your ${CONFIG_FILE}"
+if [ "X${ELM_VERSIONS}" == "X" ]; then
+  echo "You must set up a ELM_VERSIONS list in your ${CONFIG_FILE}"
   exit 1
 fi
 
@@ -51,23 +51,23 @@ setup_container() {
   docker commit `docker ps -l -q` $ID
 }
 
-# A basic dev image with the build tools needed for Node
+# A basic dev image with the build tools needed for Elm
 # adding "universe" to make it easier to add additional tools for
 # builds that need it
 setup_container "dev_base" "ubuntu:12.10" " \
   echo 'deb http://archive.ubuntu.com/ubuntu quantal main universe' > /etc/apt/sources.list; \
   apt-get update; \
-  apt-get install -y make gcc g++ python git"
+  apt-get install -y make gcc g++ python git haskell-platform"
 
-# The main Node repo in an image by itself
-setup_container "node_dev" "dev_base" " \
-  git clone https://github.com/joyent/node.git /usr/src/node/"
+# The main Elm repo in an image by itself
+setup_container "elm_dev" "dev_base" " \
+  git clone https://github.com/evancz/Elm /usr/src/Elm/"
 
-# For each version of Node, make an image by checking out that branch
+# For each version of Elm, make an image by checking out that branch
 # on the repo, building it and installing it
-for NV in $NODE_VERSIONS; do
-  setup_container "node_dev-$NV" "node_dev" " \
-    cd /usr/src/node && \
+for NV in $ELM_VERSIONS; do
+  setup_container "elm_dev-$NV" "elm_dev" " \
+    cd /usr/src/Elm && \
     git fetch origin && \
     git checkout $NV && \
     git pull origin $NV && \

@@ -32,50 +32,50 @@ For each Elm version, you will end up with an image named "elm_dev-VERSION" wher
 .detrc
 ------
 
-Both `setup-dnt` and `dnt` read the ***.dntrc*** file in the current working directory to load the current configuration. The file is simply read as a Bash script so it can contain arbitrary Bash commands. To configure **DNT** you need to set some key variables: `NODE_VERSIONS` and `TEST_CMD`. Optional variables include `COPYDIR`, `OUTPUT_PREFIX`, `SIMULTANEOUS`, `COPY_CMD` and `LOG_OK_CMD`.
+Both `setup-det` and `det` read the ***.detrc*** file in the current working directory to load the current configuration. The file is simply read as a Bash script so it can contain arbitrary Bash commands. To configure **DET** you need to set some key variables: `ELM_VERSIONS` and `TEST_CMD`. Optional variables include `COPYDIR`, `OUTPUT_PREFIX`, `SIMULTANEOUS`, `COPY_CMD` and `LOG_OK_CMD`.
 
-A basic ***.dntrc*** file for a Node package with a native add-on component might look like this:
+A basic ***.detrc*** file for a Elm package with a native add-on component might look like this:
 
 ```sh
 ## DET config file
 ## see https://github.com/madscoaducom/det
 
-NODE_VERSIONS="master v0.11.9 v0.10.22"
+ELM_VERSIONS="master 0.10.0.2"
 OUTPUT_PREFIX="libssh-"
 TEST_CMD="\
-  cd /dnt/ &&                                                    \
+  cd /det/ &&                                                    \
   npm install &&                                                 \
   node_modules/.bin/node-gyp --nodedir /usr/src/node/ rebuild && \
   node_modules/.bin/tap test/*-test.js                           \
 "
 ```
 
-### `NODE_VERSIONS`
+### `ELM_VERSIONS`
 
 ***Required***
 
-A space-separated list of branches or tags in the Node.js repository. For each version listed, the Docker image for that version will be run with a copy of your source code and the `TEST_CMD` will be executed.
+A space-separated list of branches or tags in the Elm.js repository. For each version listed, the Docker image for that version will be run with a copy of your source code and the `TEST_CMD` will be executed.
 
 Note also you can override the list by supplying any number of versions as command-line arguments:
 
 ```sh
-$ sudo dnt master v0.10.20
+$ sudo det master v0.10.20
 ```
 
-<b>Updating your list of <code>NODE_VERSIONS</code></b>
+<b>Updating your list of <code>ELM_VERSIONS</code></b>
 
-As you add new versions of Node to test against you will need to re-run `sudo setup-dnt` to make sure you have images set-up properly for these new versions.
+As you add new versions of Elm to test against you will need to re-run `sudo setup-det` to make sure you have images set-up properly for these new versions.
 
-**Testing against Node master**
+**Testing against Elm master**
 
 If you are using "master" as one of your versions then you will need to occasionally remove and rebuild your master image:
 
 ```sh
 $ sudo docker rmi node_dev-master
-$ sudo setup-dnt
+$ sudo setup-det
 ```
 
-This removes the Docker image for master and rebuilts it from the latest master in the Node repository.
+This removes the Docker image for master and rebuilts it from the latest master in the Elm repository.
 
 ### `TEST_CMD`
 
@@ -85,7 +85,7 @@ A command, or list of commands to be executed with Bash (`/bin/bash -c "${TEST_C
 
 You should prefer `&&` to `;` to separate commands so a failure causes the list of commands to fail.
 
-By default, your entire source directory minus *.git/* and *build/* are copied into the container; this includes *node_modules/*. The copy will be located in the */dnt/* directory of the container (this can be configured with `COPY_CMD` below).
+By default, your entire source directory minus *.git/* and *build/* are copied into the container; this includes *node_modules/*. The copy will be located in the */det/* directory of the container (this can be configured with `COPY_CMD` below).
 
 If you are using native-addons as dependencies you may need to purge them from *node_modules/* directory prior to running `npm install` to reinstall them.
 
@@ -95,25 +95,25 @@ Your test output should include some method of verifying a pass or fail. See `LO
 
 ***Default:*** *current working directory*
 
-**DNT** copies the current working directory into each image prior to test execution. This is done by mounting the directory in the image (read-only) and using `rsync` to perform a copy. To customise the directory being mounted, change `COPYDIR`.
+**DET** copies the current working directory into each image prior to test execution. This is done by mounting the directory in the image (read-only) and using `rsync` to perform a copy. To customise the directory being mounted, change `COPYDIR`.
 
 ### `OUTPUT_PREFIX`
 
 ***Default:*** *""*
 
-Logs for each run are sent to */tmp/dnt-VERSION.out* where "VERSION" is the Node.js version being used. Supply an `OUTPUT_PREFIX` to prefix a project name to the beginning of the filenames.
+Logs for each run are sent to */tmp/det-VERSION.out* where "VERSION" is the Elm.js version being used. Supply an `OUTPUT_PREFIX` to prefix a project name to the beginning of the filenames.
 
 ### `SIMULTANEOUS`
 
 ***Default:*** *number of cores on the current computer*
 
-By default, **DNT** will run parallel tests, up to the number of cores on the current computer. This may be too much for some computers, depending on other system resources and the jobs being executed so you may want to lower this number.
+By default, **DET** will run parallel tests, up to the number of cores on the current computer. This may be too much for some computers, depending on other system resources and the jobs being executed so you may want to lower this number.
 
 ### `COPY_CMD`
 
-***Default:*** <i><code>rsync -aAXx --delete --exclude .git --exclude build /dnt-src/ /dnt/</code></i>
+***Default:*** <i><code>rsync -aAXx --delete --exclude .git --exclude build /det-src/ /det/</code></i>
 
-Override this command to adjust the way **DNT** copies the mounted source directory to the required test folder in the image. The source folder will always be mounted as `/dnt-src/` but the `/dnt/` target directory can be changed if you take this into account in your `TEST_CMD`.
+Override this command to adjust the way **DET** copies the mounted source directory to the required test folder in the image. The source folder will always be mounted as `/det-src/` but the `/det/` target directory can be changed if you take this into account in your `TEST_CMD`.
 
 ### `LOG_OK_CMD`
 
@@ -133,9 +133,9 @@ Other considerations
 
  * You should **check your logs** occasionally to make sure that tests are actually running. node-tap, if run incorrectly can execute zero tests and output an "ok" which will still pass. Your `LOG_OK_CMD` may also be doing unexpected things.
 
- * The initial node_dev Docker image you create has a copy of the registry at the time you first run `sudo setup-dnt`. As this gets older it will take longer to download the latest master or new versions of Node. You may want to `sudo docker rmi node_dev` to fetch a new copy.
+ * The initial node_dev Docker image you create has a copy of the registry at the time you first run `sudo setup-det`. As this gets older it will take longer to download the latest master or new versions of Elm. You may want to `sudo docker rmi node_dev` to fetch a new copy.
 
- * If your test environment requires specific fixtures that take a considerable amount of time to set up for each test (for example an installation of a database or other complex software) then you could consider customising the node_dev Docker image to have the environment partially set up so you don't need to repeat the process for each test run. Note though that this is not portable for other people needing to run your tests with **DNT** without specific additional instructions.
+ * If your test environment requires specific fixtures that take a considerable amount of time to set up for each test (for example an installation of a database or other complex software) then you could consider customising the node_dev Docker image to have the environment partially set up so you don't need to repeat the process for each test run. Note though that this is not portable for other people needing to run your tests with **DET** without specific additional instructions.
 
 
 Contributing
